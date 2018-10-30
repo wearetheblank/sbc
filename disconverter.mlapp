@@ -38,8 +38,8 @@ classdef yieldcalc < matlab.apps.AppBase
             t2m = m-s; % calculate DTM
             p = 100 - d * (t2m/360); % calculate bond price
             app.by.Text = num2str(p,'%0.5f'); % set bond price label
-            app.my.Text = num2str(((100 - d)/d)*(360/t2m)*100,'%0.5f'); % compute money market yield
-            app.bey.Text = num2str(((100 - d)/d)*(365/t2m)*100,'%0.5f'); % compute bond equivalent yield
+            app.my.Text = num2str(((100 - p)/p)*(360/t2m)*100,'%0.5f'); % compute money market yield
+            app.bey.Text = num2str(((100 - p)/p)*(365/t2m)*100,'%0.5f'); % compute bond equivalent yield
         end
     end
 
