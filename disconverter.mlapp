@@ -1,0 +1,165 @@
+classdef yieldcalc < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        YieldCalculatorUIFigure     matlab.ui.Figure
+        EnterDiscountRateEditField  matlab.ui.control.EditField
+        MaturityDateEditField       matlab.ui.control.EditField
+        SettleDateEditField         matlab.ui.control.EditField
+        BondPriceLabel              matlab.ui.control.Label
+        MoneyMarketYieldLabel       matlab.ui.control.Label
+        BondEquivalentYieldLabel    matlab.ui.control.Label
+        by                          matlab.ui.control.Label
+        my                          matlab.ui.control.Label
+        bey                         matlab.ui.control.Label
+        ComputeButton               matlab.ui.control.Button
+        DiscountRateLabel           matlab.ui.control.Label
+        SettleDateLabel             matlab.ui.control.Label
+        MaturityDateLabel           matlab.ui.control.Label
+    end
+
+
+
+    methods (Access = private)
+
+        % Code that executes after component creation
+        function startupFcn(app)
+            app.SettleDateEditField.Value = datestr(floor(now),'mm-dd-yyyy');
+            app.by.Text = "";
+            app.my.Text = "";
+            app.bey.Text = "";
+        end
+
+        % Button pushed function: ComputeButton
+        function ComputeButtonPushed(app, event)
+            d = str2num(app.EnterDiscountRateEditField.Value); % get discount rate
+            s = datenum(app.SettleDateEditField.Value); % get settle date
+            m = datenum(app.MaturityDateEditField.Value); % get maturity date
+            t2m = m-s; % calculate DTM
+            p = 100 - d * (t2m/360); % calculate bond price
+            app.by.Text = num2str(p,'%0.5f'); % set bond price label
+            app.my.Text = num2str(((100 - d)/d)*(360/t2m)*100,'%0.5f'); % compute money market yield
+            app.bey.Text = num2str(((100 - d)/d)*(365/t2m)*100,'%0.5f'); % compute bond equivalent yield
+        end
+    end
+
+    % App initialization and construction
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create YieldCalculatorUIFigure
+            app.YieldCalculatorUIFigure = uifigure;
+            app.YieldCalculatorUIFigure.Position = [100 100 262 302];
+            app.YieldCalculatorUIFigure.Name = 'Yield Calculator';
+
+            % Create EnterDiscountRateEditField
+            app.EnterDiscountRateEditField = uieditfield(app.YieldCalculatorUIFigure, 'text');
+            app.EnterDiscountRateEditField.Position = [157 267 100 22];
+
+            % Create MaturityDateEditField
+            app.MaturityDateEditField = uieditfield(app.YieldCalculatorUIFigure, 'text');
+            app.MaturityDateEditField.Position = [157 175 100 22];
+
+            % Create SettleDateEditField
+            app.SettleDateEditField = uieditfield(app.YieldCalculatorUIFigure, 'text');
+            app.SettleDateEditField.Position = [157 222 100 22];
+
+            % Create BondPriceLabel
+            app.BondPriceLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.BondPriceLabel.HorizontalAlignment = 'right';
+            app.BondPriceLabel.FontSize = 14;
+            app.BondPriceLabel.FontWeight = 'bold';
+            app.BondPriceLabel.Position = [47 127 114 22];
+            app.BondPriceLabel.Text = 'Bond Price:';
+
+            % Create MoneyMarketYieldLabel
+            app.MoneyMarketYieldLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.MoneyMarketYieldLabel.HorizontalAlignment = 'right';
+            app.MoneyMarketYieldLabel.FontSize = 14;
+            app.MoneyMarketYieldLabel.FontWeight = 'bold';
+            app.MoneyMarketYieldLabel.Position = [21 88 140 22];
+            app.MoneyMarketYieldLabel.Text = 'Money Market Yield:';
+
+            % Create BondEquivalentYieldLabel
+            app.BondEquivalentYieldLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.BondEquivalentYieldLabel.HorizontalAlignment = 'right';
+            app.BondEquivalentYieldLabel.FontSize = 14;
+            app.BondEquivalentYieldLabel.FontWeight = 'bold';
+            app.BondEquivalentYieldLabel.Position = [4 49 157 22];
+            app.BondEquivalentYieldLabel.Text = 'Bond Equivalent Yield:';
+
+            % Create by
+            app.by = uilabel(app.YieldCalculatorUIFigure);
+            app.by.FontSize = 14;
+            app.by.Position = [172 127 75 22];
+
+            % Create my
+            app.my = uilabel(app.YieldCalculatorUIFigure);
+            app.my.FontSize = 14;
+            app.my.Position = [172 88 81 22];
+
+            % Create bey
+            app.bey = uilabel(app.YieldCalculatorUIFigure);
+            app.bey.FontSize = 14;
+            app.bey.Position = [172 49 81 22];
+
+            % Create ComputeButton
+            app.ComputeButton = uibutton(app.YieldCalculatorUIFigure, 'push');
+            app.ComputeButton.ButtonPushedFcn = createCallbackFcn(app, @ComputeButtonPushed, true);
+            app.ComputeButton.BackgroundColor = [0.4706 0.6706 0.1882];
+            app.ComputeButton.FontWeight = 'bold';
+            app.ComputeButton.Position = [98 8 100 22];
+            app.ComputeButton.Text = 'Compute';
+
+            % Create DiscountRateLabel
+            app.DiscountRateLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.DiscountRateLabel.FontSize = 14;
+            app.DiscountRateLabel.FontWeight = 'bold';
+            app.DiscountRateLabel.Position = [43 267 104 22];
+            app.DiscountRateLabel.Text = 'Discount Rate:';
+
+            % Create SettleDateLabel
+            app.SettleDateLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.SettleDateLabel.FontSize = 14;
+            app.SettleDateLabel.FontWeight = 'bold';
+            app.SettleDateLabel.Position = [61 222 83 22];
+            app.SettleDateLabel.Text = 'Settle Date:';
+
+            % Create MaturityDateLabel
+            app.MaturityDateLabel = uilabel(app.YieldCalculatorUIFigure);
+            app.MaturityDateLabel.FontSize = 14;
+            app.MaturityDateLabel.FontWeight = 'bold';
+            app.MaturityDateLabel.Position = [47 175 99 22];
+            app.MaturityDateLabel.Text = 'Maturity Date:';
+        end
+    end
+
+    methods (Access = public)
+
+        % Construct app
+        function app = yieldcalc
+
+            % Create and configure components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.YieldCalculatorUIFigure)
+
+            % Execute the startup function
+            runStartupFcn(app, @startupFcn)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.YieldCalculatorUIFigure)
+        end
+    end
+end
