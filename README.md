@@ -1,2 +1,3 @@
 # BANK DISCOUNT RATE CONVERTER
 MATLAB app that converts a bond quoted by a bank discount rate as a money market yield and bond equivalent yield. 
+![alt text](https://i.imgur.com/PTw7ekp.png)
